@@ -26,7 +26,7 @@ Windows 上 `localhost` 常解析到 `::1`，若本机还有别的进程绑在 I
 
 ## 端口
 
-只有 `proxy` 映射 `3000:80`。`web`、`api`、`garage` 不对外。
+只有 `nginx` 映射 `3000:80`。`api`、`garage` 不对外。页面由 nginx 托管 `nuxt generate` 的静态文件，`/api` 和 `/kingei` 由同一进程反代。
 
 数据在 named volume：`api-data`（SQLite）、`garage-meta`、`garage-data`。
 
