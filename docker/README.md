@@ -30,6 +30,22 @@ Windows 上 `localhost` 常解析到 `::1`，若本机还有别的进程绑在 I
 
 数据在 named volume：`api-data`（SQLite）、`garage-meta`、`garage-data`。
 
+## PostgreSQL
+
+同一套 API，镜像用 `--features postgres` 编译。覆盖文件会加 Postgres 容器并把 `DATABASE_URL` 指过去：
+
+```
+docker compose -f docker-compose.yml -f docker-compose.postgres.yml up --build
+```
+
+仍从宿主机 **3000** 访问。本机 `cargo run` 默认 sqlite；验 Postgres 时：
+
+```
+cargo run --no-default-features --features postgres
+```
+
+并把 `kingei-rust/.env` 的 `DATABASE_URL` 改成 `postgres://kingei:kingei@127.0.0.1:5432/kingei`（需先把 Postgres 端口映射出来，或只用上面的 compose overlay）。
+
 ## 本机开发
 
 容器与本机 `cargo run` + `pnpm dev` 可并存。本机仍用 `kingei-rust/.env`（无 `GARAGE_PUBLIC_ENDPOINT` 时预签名指向 `127.0.0.1:3900`）。不要同时占用宿主机 IPv4 的 3000。

@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: kingei
+      POSTGRES_PASSWORD: kingei
+      POSTGRES_DB: kingei
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kingei -d kingei"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./kingei-rust
+      args:
+        DB_BACKEND: postgres
+    environment:
+      DATABASE_URL: postgres://kingei:kingei@postgres:5432/kingei
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pg-data:
