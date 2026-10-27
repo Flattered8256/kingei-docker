@@ -3,9 +3,9 @@ services:
     image: dxflrs/garage:v2.5.0
     command: ["/garage", "server", "--single-node", "--default-bucket"]
     environment:
-      GARAGE_DEFAULT_ACCESS_KEY: ${GARAGE_ACCESS_KEY}
-      GARAGE_DEFAULT_SECRET_KEY: ${GARAGE_SECRET_KEY}
-      GARAGE_DEFAULT_BUCKET: ${GARAGE_BUCKET}
+      GARAGE_DEFAULT_ACCESS_KEY: ${S3_ACCESS_KEY}
+      GARAGE_DEFAULT_SECRET_KEY: ${S3_SECRET_KEY}
+      GARAGE_DEFAULT_BUCKET: ${S3_BUCKET}
     volumes:
       - ./docker/garage.toml:/etc/garage.toml:ro
       - garage-meta:/var/lib/garage/meta
@@ -25,12 +25,12 @@ services:
       DATABASE_URL: sqlite:///data/chat.db
       PORT: "8000"
       JWT_SECRET: ${JWT_SECRET}
-      GARAGE_ENDPOINT: http://garage:3900
-      GARAGE_PUBLIC_ENDPOINT: ${GARAGE_PUBLIC_ENDPOINT}
-      GARAGE_ACCESS_KEY: ${GARAGE_ACCESS_KEY}
-      GARAGE_SECRET_KEY: ${GARAGE_SECRET_KEY}
-      GARAGE_BUCKET: ${GARAGE_BUCKET}
-      GARAGE_REGION: ${GARAGE_REGION:-us-east-1}
+      S3_ENDPOINT: http://garage:3900
+      S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_BUCKET: ${S3_BUCKET}
+      S3_REGION: ${S3_REGION:-us-east-1}
       RUST_LOG: info
     volumes:
       - api-data:/data
