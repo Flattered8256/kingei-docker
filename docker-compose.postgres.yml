@@ -1,5 +1,5 @@
 services:
-  postgres:
+  kingei-postgres:
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: kingei
@@ -14,15 +14,15 @@ services:
       retries: 12
     restart: unless-stopped
 
-  api:
+  kingei-app:
     build:
-      context: ./kingei-rust
+      context: .
       args:
         DB_BACKEND: postgres
     environment:
-      DATABASE_URL: postgres://kingei:kingei@postgres:5432/kingei
+      DATABASE_URL: postgres://kingei:kingei@kingei-postgres:5432/kingei
     depends_on:
-      postgres:
+      kingei-postgres:
         condition: service_healthy
 
 volumes:

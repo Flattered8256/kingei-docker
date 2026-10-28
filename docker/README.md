@@ -20,19 +20,19 @@ docker compose up --build
 
 Windows 上 `localhost` 常解析到 `::1`，若本机还有别的进程绑在 IPv6 的 3000，浏览器会打到那个进程而不是容器。用 `127.0.0.1` 可固定走到 Compose 映射。
 
-局域网其它机器访问时，把 `S3_PUBLIC_ENDPOINT` 改成 `http://<主机IP>:3000` 后重启 api。
+局域网其它机器访问时，把 `S3_PUBLIC_ENDPOINT` 改成 `http://<主机IP>:3000` 后重启 kingei-app。
 
-把映射改成例如 `8080:80` 时，同步改 `S3_PUBLIC_ENDPOINT=http://127.0.0.1:8080`。
+把映射改成例如 `8080:3000` 时，同步改 `S3_PUBLIC_ENDPOINT=http://127.0.0.1:8080`。
 
 ## 端口
 
-只有 `nginx` 映射 `3000:80`。`api`、`garage` 不对外。页面由 nginx 托管 `nuxt generate` 的静态文件，`/api` 和 `/kingei` 由同一进程反代。
+只有 `kingei-app` 映射 `3000:3000`。`kingei-garage` 不对外。同一个进程托管 `nuxt generate` 的静态文件，`/api` 进 Axum，`/{桶名}` 反代到 Garage（预签名上传下载）。
 
 数据在 named volume：`api-data`（SQLite）、`garage-meta`、`garage-data`。
 
 ## PostgreSQL
 
-同一套 API，镜像用 `--features postgres` 编译。覆盖文件会加 Postgres 容器并把 `DATABASE_URL` 指过去：
+同一个 app 镜像，用 `--features postgres` 编译。覆盖文件会加 Postgres 容器并把 `DATABASE_URL` 指过去：
 
 ```
 docker compose -f docker-compose.yml -f docker-compose.postgres.yml up --build
@@ -60,7 +60,7 @@ S3_REGION=us-east-1
 S3_MANAGE_BUCKET=false
 ```
 
-`S3_MANAGE_BUCKET=false` 时启动只 `HeadBucket`，不建桶、不改 CORS。浏览器直传预签名 URL，CORS 在控制台配。官方 AWS S3 再加 `S3_PATH_STYLE=false`。
+`S3_MANAGE_BUCKET=false` 时启动只 `HeadBucket`，不建桶、不改 CORS。浏览器直传预签名 URL，CORS 在控制台配。官方 AWS S3 再加 `S3_PATH_STYLE=false`。预签名指向对象存储本身时，浏览器不经过应用。
 
 ## 本机开发
 
